@@ -17,7 +17,7 @@
 r, c, 선물(a~z)
 
 <br>
-#### \[INPUT\]
+### \[INPUT\]
 <div style="background-color: rgb(50, 50, 50); width: 10%; color: white">
 2, 4 <br>
 caab <br>
@@ -25,7 +25,7 @@ dbac
 </div>
 
 <br>
-#### \[OUTPUT\]
+### \[OUTPUT\]
 <div style="background-color: rgb(50, 50, 50); width: 10%; color: white">
 4
 </div>
