@@ -10,7 +10,6 @@
 | | 0 | 1 | 2 | 3 | 
 |:--:|:--:|:--:|:--:|:--:|
 | 0 | **c** | **a** | **a** | **b** |
-|:--:|:--:|:--:|:--:|:--:|
 | 1 | **d** | **b** | **a** | **c** |
 
 
@@ -31,4 +30,4 @@ dbac
 
 
 <br>
-<a href="https://github.com/KangSooHan/algorithm/blob/main/Algorithm/DFS/">Code</a>\
+<a href="https://github.com/KangSooHan/algorithm/blob/main/Algorithm/DFS/">Code</a>
