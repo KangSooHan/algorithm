@@ -51,7 +51,6 @@ public:
         root = nullptr;
         node_count = 0;
     }
-ear
     void insert(int x)
     {
         if(root == nullptr)
