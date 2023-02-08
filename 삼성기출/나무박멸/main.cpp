@@ -89,8 +89,7 @@ int spread(){
             ny += cy[d];
             if(nx < 0 || ny < 0 || nx >= n || ny >= n) break;
             dead[nx][ny] = c+1;
-            if(MAP[nx][ny] < 0) break;
-            if(MAP[nx][ny]==0) break;
+            if(MAP[nx][ny] <= 0) break;
             MAP[nx][ny] = 0;
         }
     }
@@ -125,6 +124,4 @@ int main(){
         next();
     }
     printf("%d\n", ans);
-
-
 }
