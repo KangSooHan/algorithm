@@ -1,103 +1,106 @@
 #include <stdio.h>
 #include <vector>
 
+using namespace std;
+
 int N;
-
-struct Node{
-    std::vector<int> child;
-    int depth;
-    int parent;
-};
-
-Node node_pool[100002];
 
 struct queue{
     int pool[100002];
     int r, l;
-
-    void init(){
-        r = l = 0;
-    }
-
-    void push(int data)
-    {
-        pool[r++] = data;
-    }
-
-    int pop(){
-        return pool[l++];
-    }
-    bool empty(){
-        return r==l;
-    }
-
-    int size(){
-        return r-l;
-    }
+    void init(){r=l=0;}
+    void push(int data){pool[r++] = data;}
+    int pop(){return pool[l++];}
+    bool empty(){return r==l;}
 };
 
 queue q;
 
+struct Node{
+    int depth;
+    int anc[17];
+    vector<int> child;
+};
+
+Node node_pool[100002];
+int node_cnt;
+
+void new_node(int parent){
+    node_pool[node_cnt].depth = node_pool[parent].depth+1;
+    for(int i=0; i<17; ++i){
+        node_pool[node_cnt].anc[i] = 0;
+    }
+    node_pool[node_cnt].anc[0] = parent;
+    node_pool[node_cnt].child.clear();
+    node_pool[parent].child.emplace_back(node_cnt);
+    node_cnt++;
+}
+
 class Tree{
+    Node* root;
 public:
     Tree() = default;
-
     void init(){
-        node_pool[1].child.clear();
-        node_pool[1].depth = 1;
+        node_cnt = 1;
+        new_node(0);
     }
 
-    void insert(int idx, int parent)
-    {
-        node_pool[parent].child.emplace_back(idx);
-        node_pool[idx].depth = node_pool[parent].depth + 1;
-        node_pool[idx].parent = parent;
-        node_pool[idx].child.clear();
+    void push(int parent){
+        new_node(parent);
     }
 
-    int calc(){
+    void connect(){
+        for(int k=1; k<17; ++k){
+            for(int cur=1; cur<node_cnt; ++cur){
+                node_pool[cur].anc[k] = node_pool[node_pool[cur].anc[k-1]].anc[k-1];
+            }
+        }
+    }
+
+    long long int bfs(){
         q.init();
         q.push(1);
+        long long int ans = 0;
         int prev = 1;
-        int ans = 0;
-        while(!q.empty())
-        {
+        while(!q.empty()){
             int cur = q.pop();
-            int size = node_pool[cur].child.size();
-            for(int i=0; i<size; ++i)
-            {
+            int anc = lca(prev, cur);
+            ans += node_pool[prev].depth + node_pool[cur].depth - node_pool[anc].depth *2;
+            prev = cur;
+            for(int i=0; i<node_pool[cur].child.size(); ++i){
                 q.push(node_pool[cur].child[i]);
             }
-
-            ans += len(prev, cur);
-            prev = cur;
         }
+
         return ans;
     }
 
-private:
-    int len(int start, int end)
-    {
-        int cnt = 0;
-        while(node_pool[start].depth != node_pool[end].depth)
-        {
-            if(node_pool[start].depth > node_pool[end].depth)
-            {
-                start = node_pool[start].parent;
-            }
-            else{
-                end = node_pool[end].parent;
-            }
-            cnt++;
+    int lca(int a, int b){
+        if(node_pool[a].depth < node_pool[b].depth){
+            int temp = a;
+            a = b;
+            b = temp;
         }
 
-        while(start != end)
-        {
-            cnt += 2;
-            start = node_pool[start].parent;
-            end = node_pool[end].parent;
+        int diff = node_pool[a].depth - node_pool[b].depth;
+
+        for(int i=0; diff; ++i){
+            if(diff%2==1) a = node_pool[a].anc[i];
+            diff/=2;
         }
-        return cnt;
+
+        if(a!=b){
+            for(int i=16; i>=0; --i){
+                if(node_pool[a].anc[i] != 0 && node_pool[a].anc[i] != node_pool[b].anc[i]){
+                    a = node_pool[a].anc[i];
+                    b = node_pool[b].anc[i];
+                }
+
+            }
+            a = node_pool[a].anc[0];
+        }
+
+        return a;
     }
 };
 
@@ -109,14 +112,17 @@ int main(){
     scanf("%d", &T);
     for(int test=1; test<=T; ++test)
     {
-        tree.init();
         scanf("%d", &N);
+        tree.init();
         for(int i=2; i<=N; ++i){
             int parent;
             scanf("%d", &parent);
-            tree.insert(i, parent);
+            tree.push(parent);
         }
-        printf("#%d %d\n", test, tree.calc());
+        tree.connect();
+
+        printf("#%d %lld\n",test, tree.bfs());
+
     }
     return 0;
 }
