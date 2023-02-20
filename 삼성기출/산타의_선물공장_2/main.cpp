@@ -63,6 +63,7 @@ public:
     int move(int src, int dst){
         src--, dst--;
         if(cnt[src] == 0) return cnt[dst];
+
         cnt[dst] += cnt[src];
         cnt[src] = 0;
 
